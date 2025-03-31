@@ -290,7 +290,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
   };
 
   return (
-    <div className="mt-4 w-max p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="mt-4 w-full p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
         <h3 className="text-xl font-semibold text-white">{cryptoId.toUpperCase()} Price History</h3>
 
