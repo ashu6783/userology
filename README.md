@@ -45,12 +45,12 @@ cd your-nextjs-project
 # Install Dependencies:
 npm install
 
-# Set Up Environment Variables: Create a .env.local file in the root directory and add your API keys:
+## Set Up Environment Variables: Create a .env.local file in the root directory and add your API keys:
 CRYPTO_API_KEY=your-coingecko-api-key
 NEWS_API_KEY=your-newsapi-key
 OPENWEATHERMAP_API_KEY=your-openweathermap-api-key
 
-# Run the Development Server:
+## Run the Development Server:
 
 
 ## Usage
@@ -59,7 +59,7 @@ URL: / (root route)
 Description: Displays an animated "Userology" title using Framer Motion, with a gradient background and a welcome message.
 Navigation: Add a button or link to navigate to the dashboard (e.g., /dashboard).
 
-# Dashboard
+## Dashboard
 URL: /dashboard
 Description: A tabbed interface with four sections:
 Weather: Displays current weather data via WeatherSection.
@@ -67,7 +67,7 @@ Crypto: Shows cryptocurrency data (CryptoSection) and a price history chart (Pri
 News: Displays news articles via NewsSection.
 All: Combines all sections in a single view.
 
-# Navigation:
+## Navigation:
 Click the "Weather", "Crypto", "News", or "All" buttons to switch sections.
 The active section is highlighted.
 Real-Time Updates
@@ -81,17 +81,17 @@ UI/UX
 Single-Column Layout: A grid grid-cols-1 layout ensures consistent vertical alignment across all screen sizes, improving readability on mobile devices.
 Tabbed Navigation: Buttons for section switching (Weather, Crypto, News, All) are styled with Tailwind CSS and use a flex-wrap layout for mobile responsiveness.
 
-# Styling
+##  Styling
 Tailwind CSS: Adopted for its utility-first approach, enabling rapid development and responsive design without writing custom CSS.
 Consistent Theming: Buttons and sections use a cohesive color scheme (e.g., bg-blue-600 for active states, bg-gray-200 for inactive states).
 
-# Component Design
+## Component Design
 Modularity: Components like WeatherSection, CryptoSection, and NewsSection are self-contained, making them reusable and easy to maintain.
 Chart.js for Visualization: Used in PriceHistoryChart to display cryptocurrency price trends, with a focus on simplicity and performance.
 Real-Time Data
 WebSocket with Redux: A WebSocket connection is established on dashboard load to fetch real-time crypto price updates, ensuring the data stays current without manual refreshes.
 
-# Dependencies
+## Dependencies
 Next.js: Framework for React applications with SSR and API routes.
 React: Core library for building UI components.
 TypeScript: For type safety and better tooling.
