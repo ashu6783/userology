@@ -3,13 +3,7 @@ import React from 'react';
 import CryptoDetails from '../../../components/crypto/CryptoDetails';
 import PriceHistoryChart from '../../../components/crypto/PriceHistoryChart';
 
-interface PageProps {
-    params: {
-        id: string;
-    };
-}
-
-export default function CryptoPage({ params }: PageProps) {
+export default function CryptoPage({ params }: { params: { id: string } }) {
     const cryptoId = params.id;
 
     return (

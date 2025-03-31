@@ -1,11 +1,10 @@
 'use client';
-import React, { use } from 'react';
+import React from 'react';
 import CityDetails from '../../../components/city/CityDetails';
 import WeatherHistoryChart from '../../../components/city/WeatherHistoryChart';
 
-export default function CityPage({ params }: { params: Promise<{ id: string }> }) {
-    const resolvedParams = use(params);
-    const cityId = resolvedParams.id;
+export default function CityPage({ params }: { params: { id: string } }) {
+    const cityId = params.id;
 
     return (
         <div>
