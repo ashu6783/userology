@@ -29,9 +29,12 @@ export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const [activeSection, setActiveSection] = useState('weather');
   const [initialLoading, setInitialLoading] = useState(true);
+  const [selectedCity, setSelectedCity] = useState('Vancouver');
+
+  const cities = ['Vancouver', 'London', 'New York', 'Tokyo', 'Sydney'];
 
   useEffect(() => {
-   
+
     dispatch({ type: 'WEBSOCKET_CONNECT' });
 
     const timer = setTimeout(() => {
@@ -46,7 +49,7 @@ export default function Home() {
       case 'weather':
         return (
           <Suspense fallback={<LoadingComponent />}>
-            <WeatherSection />
+            <WeatherSection city={selectedCity} />
           </Suspense>
         );
       case 'crypto':
@@ -70,7 +73,7 @@ export default function Home() {
         return (
           <div className="flex flex-col gap-6 w-full">
             <Suspense fallback={<LoadingComponent />}>
-              <WeatherSection />
+              <WeatherSection city={selectedCity} />
             </Suspense>
             <Suspense fallback={<LoadingComponent />}>
               <CryptoSection />
@@ -86,7 +89,7 @@ export default function Home() {
       default:
         return (
           <Suspense fallback={<LoadingComponent />}>
-            <WeatherSection />
+            <WeatherSection city={selectedCity} />
           </Suspense>
         );
     }
@@ -101,13 +104,32 @@ export default function Home() {
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
 
+      {/* City Selection Dropdown */}
+      <div className="mb-6">
+        <label htmlFor="city-select" className="mr-2 text-lg font-medium text-white">
+          Select City:
+        </label>
+        <select
+          id="city-select"
+          value={selectedCity}
+          onChange={(e) => setSelectedCity(e.target.value)}
+          className="px-3 py-2 border rounded-md focus:outline-none text-gray-800 bg-white"
+        >
+          {cities.map((city) => (
+            <option key={city} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Mobile-friendly navigation*/}
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setActiveSection('weather')}
           className={`px-4 py-2 rounded-md font-semibold flex-1 min-w-[80px] ${activeSection === 'weather'
-              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
-              : 'bg-gray-200 hover:bg-gray-300'
+            ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
+            : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
           Weather
@@ -115,8 +137,8 @@ export default function Home() {
         <button
           onClick={() => setActiveSection('crypto')}
           className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'crypto'
-              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
-              : 'bg-gray-200 hover:bg-gray-300'
+            ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
+            : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
           Crypto
@@ -124,8 +146,8 @@ export default function Home() {
         <button
           onClick={() => setActiveSection('news')}
           className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'news'
-              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
-              : 'bg-gray-200 hover:bg-gray-300'
+            ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
+            : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
           News
@@ -133,8 +155,8 @@ export default function Home() {
         <button
           onClick={() => setActiveSection('all')}
           className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'all'
-              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
-              : 'bg-gray-200 hover:bg-gray-300'
+            ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
+            : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
           All
