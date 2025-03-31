@@ -1,15 +1,14 @@
 'use client';
-import React, { use } from 'react';
+import React from 'react';
 import CityDetails from '../../../components/city/CityDetails';
 import WeatherHistoryChart from '../../../components/city/WeatherHistoryChart';
 
-interface RouteHandlerContext {
-  params: Promise<{ id: string }>;
+interface CityPageProps {
+    params: { id: string };
 }
 
-export default function CityPage({ params }: RouteHandlerContext) {
-    const resolvedParams = use(params); // Ensure resolution of promise
-    const cityId = resolvedParams.id;
+export default function CityPage({ params }: CityPageProps) {
+    const cityId = params.id;
 
     return (
         <div>
