@@ -75,8 +75,21 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
   const [error, setError] = useState<string | null>(null);
   const [showVolume, setShowVolume] = useState<boolean>(false);
   const [percentChange, setPercentChange] = useState<number | null>(null);
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
+
+  // Track window resize for responsive adjustments
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Map time interval to days
   const intervalToDays = React.useMemo(() => ({
@@ -169,17 +182,32 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
         return 'HH:mm';
       case '6h':
       case '12h':
-        return 'HH:mm, dd MMM';
+        return windowWidth < 640 ? 'HH:mm' : 'HH:mm, dd MMM';
       case '1d':
-        return 'dd MMM';
+        return windowWidth < 640 ? 'dd MMM' : 'dd MMM';
       default:
-        return 'dd MMM yy';
+        return windowWidth < 640 ? 'dd MMM' : 'dd MMM yy';
     }
   };
 
   // Format time labels
   const formatTimeLabel = (time: number) => {
     return format(new Date(time), getTimeFormat());
+  };
+
+  // Calculate dynamic point radius based on screen size and data points
+  const getPointRadius = () => {
+    if (timeInterval === '30d') return 0;
+    if (windowWidth < 640) return 1;
+    return 2;
+  };
+
+  // Dynamic max ticks based on screen width
+  const getMaxTicksLimit = () => {
+    if (windowWidth < 480) return 5;
+    if (windowWidth < 640) return 7;
+    if (windowWidth < 1024) return 8;
+    return timeInterval === '30d' ? 10 : 12;
   };
 
   // Chart configuration
@@ -193,8 +221,8 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
         tension: 0.3,
-        pointRadius: timeInterval === '30d' ? 0 : 2,
-        pointHoverRadius: 6,
+        pointRadius: getPointRadius(),
+        pointHoverRadius: windowWidth < 640 ? 4 : 6,
       },
       ...(showVolume && priceData[0]?.volume ? [{
         label: `${cryptoId.toUpperCase()} Volume (USD)`,
@@ -212,6 +240,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: {
       mode: 'index' as const,
       intersect: false,
@@ -220,13 +249,16 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
       x: {
         type: 'category' as const,
         title: {
-          display: true,
+          display: windowWidth >= 640,
           text: 'Time',
         },
         ticks: {
-          maxTicksLimit: timeInterval === '30d' ? 10 : 12,
-          maxRotation: 45,
-          minRotation: 0,
+          maxTicksLimit: getMaxTicksLimit(),
+          maxRotation: windowWidth < 640 ? 90 : 45,
+          minRotation: windowWidth < 640 ? 45 : 0,
+          font: {
+            size: windowWidth < 640 ? 8 : 12,
+          }
         },
         grid: {
           display: false,
@@ -235,45 +267,69 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
       y: {
         position: 'left' as const,
         title: {
-          display: true,
+          display: windowWidth >= 640,
           text: 'Price (USD)',
         },
         ticks: {
           callback: function (tickValue: string | number) {
             const value = typeof tickValue === 'number' ? tickValue : parseFloat(tickValue);
+            // Simpler formatting for mobile
+            if (windowWidth < 640) {
+              return value >= 1000 ? `$${Math.round(value)}` : `$${value.toFixed(1)}`;
+            }
             return value >= 1000 ? `$${value.toLocaleString()}` : `$${value.toFixed(2)}`;
           },
+          font: {
+            size: windowWidth < 640 ? 10 : 12,
+          }
         },
       },
       ...(showVolume ? {
         y1: {
           position: 'right' as const,
           title: {
-            display: true,
-            text: 'Volume (Million USD)',
+            display: windowWidth >= 640,
+            text: windowWidth < 768 ? 'Vol (M)' : 'Volume (Million USD)',
           },
           grid: {
             drawOnChartArea: false,
           },
+          ticks: {
+            font: {
+              size: windowWidth < 640 ? 10 : 12,
+            }
+          }
         }
       } : {}),
     },
     plugins: {
       legend: {
         position: 'top' as const,
+        display: windowWidth >= 480,
+        labels: {
+          font: {
+            size: windowWidth < 768 ? 10 : 12,
+          },
+          boxWidth: windowWidth < 768 ? 10 : 16,
+        }
       },
       title: {
-        display: true,
-        text: `${cryptoId.toUpperCase()} Price History`,
-        font: {
-          size: 16,
-        },
+        display: false, // Hide title - we have our own h3 heading
       },
       tooltip: {
+        titleFont: {
+          size: windowWidth < 640 ? 10 : 14,
+        },
+        bodyFont: {
+          size: windowWidth < 640 ? 10 : 14,
+        },
         callbacks: {
           label: function (context: TooltipItem<'line'>) {
             if (context.dataset.label?.includes('Price')) {
-              return `Price: $${parseFloat(context.raw as string).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`;
+              return `Price: $${parseFloat(context.raw as string).toLocaleString(undefined, {
+                minimumFractionDigits: windowWidth < 640 ? 1 : 2,
+                maximumFractionDigits: windowWidth < 640 ? 2 : 6
+              })}`;
             } else if (context.dataset.label?.includes('Volume')) {
               return `Volume: $${((context.raw as number) * 1000000).toLocaleString()} USD`;
             }
@@ -290,20 +346,20 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
   };
 
   return (
-    <div className="mt-4 w-full p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <h3 className="text-xl font-semibold text-white">{cryptoId.toUpperCase()} Price History</h3>
+    <div className="mt-4 w-full p-2 sm:p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <div className="flex flex-col mb-4">
+        <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">{cryptoId.toUpperCase()} Price History</h3>
 
-        <div className="mt-2 md:mt-0 flex flex-wrap gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           {percentChange !== null && (
-            <div className={`text-sm px-3 py-1 rounded-full font-medium ${percentChange >= 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+            <div className={`text-xs sm:text-sm px-2 py-1 rounded-full font-medium inline-flex items-center justify-center w-fit ${percentChange >= 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
               'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
               }`}>
               {percentChange >= 0 ? '↑' : '↓'} {Math.abs(percentChange).toFixed(2)}%
             </div>
           )}
 
-          <div className="flex gap-1">
+          <div className="flex flex-wrap gap-1">
             <button
               onClick={() => handleIntervalChange('1h')}
               className={`px-2 py-1 text-xs rounded-md ${timeInterval === '1h' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
@@ -339,42 +395,42 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
             >
               1M
             </button>
-          </div>
 
-          <button
-            onClick={() => setShowVolume(!showVolume)}
-            className={`px-2 py-1 text-xs rounded-md ${showVolume ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-              }`}
-          >
-            {showVolume ? 'Hide Volume' : 'Show Volume'}
-          </button>
+            <button
+              onClick={() => setShowVolume(!showVolume)}
+              className={`px-2 py-1 text-xs rounded-md ${showVolume ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                }`}
+            >
+              {windowWidth < 640 ? 'Vol' : (showVolume ? 'Hide Volume' : 'Show Volume')}
+            </button>
+          </div>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 mb-4 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded-md">
+        <div className="p-2 sm:p-3 mb-4 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded-md text-sm">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+        <div className="flex justify-center items-center h-48 sm:h-64">
+          <div className="w-10 h-10 sm:w-16 sm:h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
       ) : (
         <>
           {priceData.length === 0 ? (
-            <p className="text-center py-16">No price data available for {cryptoId}.</p>
+            <p className="text-center py-10 sm:py-16 text-sm sm:text-base">No price data available for {cryptoId}.</p>
           ) : (
-            <div className="h-64 md:h-96">
+            <div className="h-52 sm:h-64 md:h-80 lg:h-96">
               <Line data={chartData} options={options} />
             </div>
           )}
 
-          <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex justify-between">
-              <span>Last updated: {priceData.length > 0 ? formatTimeLabel(priceData[priceData.length - 1].time) : '-'}</span>
-              <span>Data source: CoinCap API</span>
+          <div className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex flex-col xs:flex-row justify-between gap-1">
+              <span>Updated: {priceData.length > 0 ? formatTimeLabel(priceData[priceData.length - 1].time) : '-'}</span>
+              <span>Source: CoinCap</span>
             </div>
           </div>
         </>
