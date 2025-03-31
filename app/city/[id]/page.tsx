@@ -1,14 +1,14 @@
-'use client';
 import React from 'react';
 import CityDetails from '../../../components/city/CityDetails';
 import WeatherHistoryChart from '../../../components/city/WeatherHistoryChart';
 
-interface CityPageProps {
-    params: { id: string };
+interface Params {
+    id: string;
 }
 
-export default function CityPage({ params }: CityPageProps) {
-    const cityId = params.id;
+export default async function CityPage({ params }: { params: Promise<Params> }) {
+    const resolvedParams = await params;
+    const cityId = resolvedParams.id;
 
     return (
         <div>

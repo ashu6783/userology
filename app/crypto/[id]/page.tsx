@@ -1,21 +1,12 @@
 'use client';
-import React from 'react';
-import CityDetails from '../../../components/city/CityDetails';
-import WeatherHistoryChart from '../../../components/city/WeatherHistoryChart';
+import CryptoDetails from '../../../components/crypto/CryptoDetails';
+import PriceHistoryChart from '../../../components/crypto/PriceHistoryChart';
 
-interface CityPageProps {
-    params?: { id?: string };
-}
-
-export default function CityPage({ params }: CityPageProps) {
-    if (!params?.id) {
-        return <p className="text-red-500">Invalid city ID</p>;
-    }
-
-    return (
-        <div>
-            <CityDetails city={params.id} />
-            <WeatherHistoryChart city={params.id} />
-        </div>
-    );
+export default function CryptoPage({ params }: { params: { id: string } }) {
+  return (
+    <div>
+      <CryptoDetails cryptoId={params.id} />
+      <PriceHistoryChart cryptoId={params.id} />
+    </div>
+  );
 }
