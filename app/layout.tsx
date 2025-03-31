@@ -1,4 +1,5 @@
 'use client';
+
 import { ReactNode } from 'react';
 import { Provider } from '../redux/provider';
 import Header from '../components/layout/Header';
@@ -12,7 +13,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="bg-gray-100">
         <Provider>
           <Header />
-          <div className="flex">
+          <div className="flex flex-col md:flex-row">
             <main className="flex-1 p-4">{children}</main>
             <NotificationPanel />
           </div>
