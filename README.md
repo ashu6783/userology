@@ -1,30 +1,44 @@
-## Userology Dashboard
+# Userology Dashboard
 A modern, responsive dashboard built with Next.js, TypeScript, and Tailwind CSS. The application provides a user-friendly interface to view weather, cryptocurrency prices, and news, with a dynamic landing page featuring animated text using Framer Motion. The dashboard supports real-time updates via WebSocket (using Redux) and includes a tabbed navigation system for seamless section switching
 
-# Features
-# Dynamic Dashboard:
+## Features
+
+
+## Dynamic Dashboard:
 Tabbed navigation to switch between Weather, Crypto, News, and All sections.
 Responsive single-column layout for consistent alignment across devices.
-# Real-Time Updates:
+## Real-Time Updates:
+
+
 WebSocket integration using Redux for real-time data updates (e.g., crypto prices).
-# Landing Page:
+## Landing Page:
 Animated "Userology" text for Lazy Loading.
-# Components:
-# WeatherSection: Displays current weather data (excluding historical charts).
-# CryptoSection: Shows cryptocurrency data.
-# NewsSection: Displays news articles.
-# PriceHistoryChart: Visualizes cryptocurrency price history using Chart.js.
-# Styling:
+
+
+## Components:
+ WeatherSection: Displays current weather data (excluding historical charts).
+ CryptoSection: Shows cryptocurrency data.
+ NewsSection: Displays news articles.
+ PriceHistoryChart: Visualizes cryptocurrency price history using Chart.js.
+
+ 
+## Styling:
 Tailwind CSS for responsive, utility-first styling.
-## Setup
-# Prerequisites
+
+
+# Setup
+## Prerequisites
 Node.js: Version 18.x or higher.
 npm: Version 8.x or higher.
-# API Keys:
-# Crypto API key (e.g., CoinGecko API for CryptoSection and PriceHistoryChart).
-# News API key (e.g., NewsAPI for NewsSection).
-# Weather API key (e.g., OpenWeatherMap for WeatherSection).
-# Installation
+
+
+## API Keys:
+ Crypto API key (e.g., CoinGecko API for CryptoSection and PriceHistoryChart).
+ News API key (e.g., NewsAPI for NewsSection).
+ Weather API key (e.g., OpenWeatherMap for WeatherSection).
+
+ 
+## Installation
 Clone the Repository
 git clone <repository-url>
 cd your-nextjs-project
