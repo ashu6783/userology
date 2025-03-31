@@ -3,13 +3,19 @@ import React from 'react';
 import CityDetails from '../../../components/city/CityDetails';
 import WeatherHistoryChart from '../../../components/city/WeatherHistoryChart';
 
-export default function CityPage({ params }: { params: { id: string } }) {
-    const cityId = params.id;
+interface CityPageProps {
+    params?: { id?: string };
+}
+
+export default function CityPage({ params }: CityPageProps) {
+    if (!params?.id) {
+        return <p className="text-red-500">Invalid city ID</p>;
+    }
 
     return (
         <div>
-            <CityDetails city={cityId} />
-            <WeatherHistoryChart city={cityId} />
+            <CityDetails city={params.id} />
+            <WeatherHistoryChart city={params.id} />
         </div>
     );
 }

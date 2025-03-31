@@ -1,15 +1,20 @@
 'use client';
-import React from 'react';
-import CryptoDetails from '../../../components/crypto/CryptoDetails';
-import PriceHistoryChart from '../../../components/crypto/PriceHistoryChart';
+import React, { use } from 'react';
+import CityDetails from '../../../components/city/CityDetails';
+import WeatherHistoryChart from '../../../components/city/WeatherHistoryChart';
 
-export default function CryptoPage({ params }: { params: { id: string } }) {
-    const cryptoId = params.id;
+interface RouteHandlerContext {
+  params: Promise<{ id: string }>;
+}
+
+export default function CityPage({ params }: RouteHandlerContext) {
+    const resolvedParams = use(params); // Ensure resolution of promise
+    const cityId = resolvedParams.id;
 
     return (
         <div>
-            <CryptoDetails cryptoId={cryptoId} />
-            <PriceHistoryChart cryptoId={cryptoId} />
+            <CityDetails city={cityId} />
+            <WeatherHistoryChart city={cityId} />
         </div>
     );
 }
