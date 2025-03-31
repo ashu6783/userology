@@ -1,58 +1,112 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
-import WeatherSection from '../components/dashboard/WeatherSection';
-import CryptoSection from '../components/dashboard/CryptoSection';
-import NewsSection from '../components/dashboard/NewsSection';
-import '../lib/chartSetup'; // Import here to register Chart.js components
-import PriceHistoryChart from '@/components/crypto/PriceHistoryChart';
+import '../lib/chartSetup';
+
+
+const WeatherSection = lazy(() => import('../components/dashboard/WeatherSection'));
+const CryptoSection = lazy(() => import('../components/dashboard/CryptoSection'));
+const NewsSection = lazy(() => import('../components/dashboard/NewsSection'));
+const PriceHistoryChart = lazy(() => import('@/components/crypto/PriceHistoryChart'));
+
+
+const LoadingComponent = () => (
+  <div className="flex items-center justify-center h-40">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+);
+
+const InitialLoadingScreen = () => (
+  <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
+    <div className="text-white text-6xl font-bold animate-pulse">USEROLOGY</div>
+    <div className="mt-8 text-white">Loading a goto dashboard experience with real-time updates of crypto and weather...</div>
+    <div className="mt-8 text-white">Please wait...</div>
+  </div>
+);
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const [activeSection, setActiveSection] = useState('weather');
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
+   
     dispatch({ type: 'WEBSOCKET_CONNECT' });
+
+    const timer = setTimeout(() => {
+      setInitialLoading(false);
+    }, 4000);
+
+    return () => clearTimeout(timer);
   }, [dispatch]);
 
   const renderActiveSection = () => {
     switch (activeSection) {
       case 'weather':
-        return <WeatherSection />;
+        return (
+          <Suspense fallback={<LoadingComponent />}>
+            <WeatherSection />
+          </Suspense>
+        );
       case 'crypto':
         return (
           <div className="flex flex-col gap-4 w-full">
-            <CryptoSection />
-            <PriceHistoryChart cryptoId="bitcoin" />
+            <Suspense fallback={<LoadingComponent />}>
+              <CryptoSection />
+            </Suspense>
+            <Suspense fallback={<LoadingComponent />}>
+              <PriceHistoryChart cryptoId="bitcoin" />
+            </Suspense>
           </div>
         );
       case 'news':
-        return <NewsSection />;
+        return (
+          <Suspense fallback={<LoadingComponent />}>
+            <NewsSection />
+          </Suspense>
+        );
       case 'all':
         return (
           <div className="flex flex-col gap-6 w-full">
-            <WeatherSection />
-            <CryptoSection />
-            <NewsSection />
-            <PriceHistoryChart cryptoId="bitcoin" />
+            <Suspense fallback={<LoadingComponent />}>
+              <WeatherSection />
+            </Suspense>
+            <Suspense fallback={<LoadingComponent />}>
+              <CryptoSection />
+            </Suspense>
+            <Suspense fallback={<LoadingComponent />}>
+              <NewsSection />
+            </Suspense>
+            <Suspense fallback={<LoadingComponent />}>
+              <PriceHistoryChart cryptoId="bitcoin" />
+            </Suspense>
           </div>
         );
       default:
-        return <WeatherSection />;
+        return (
+          <Suspense fallback={<LoadingComponent />}>
+            <WeatherSection />
+          </Suspense>
+        );
     }
   };
+
+
+  if (initialLoading) {
+    return <InitialLoadingScreen />;
+  }
 
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
 
-      {/* Mobile-friendly navigation - flex wrap and full width buttons on small screens */}
+      {/* Mobile-friendly navigation*/}
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setActiveSection('weather')}
-          className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'weather'
-              ? 'bg-blue-600 text-white'
+          className={`px-4 py-2 rounded-md font-semibold flex-1 min-w-[80px] ${activeSection === 'weather'
+              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
               : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
@@ -61,7 +115,7 @@ export default function Home() {
         <button
           onClick={() => setActiveSection('crypto')}
           className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'crypto'
-              ? 'bg-blue-600 text-white'
+              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
               : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
@@ -70,7 +124,7 @@ export default function Home() {
         <button
           onClick={() => setActiveSection('news')}
           className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'news'
-              ? 'bg-blue-600 text-white'
+              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
               : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
@@ -79,7 +133,7 @@ export default function Home() {
         <button
           onClick={() => setActiveSection('all')}
           className={`px-4 py-2 rounded-md flex-1 min-w-[80px] ${activeSection === 'all'
-              ? 'bg-blue-600 text-white'
+              ? 'bg-gradient-to-r from-green-500 to-[#29e2e8] text-black'
               : 'bg-gray-200 hover:bg-gray-300'
             }`}
         >
