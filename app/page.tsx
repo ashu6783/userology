@@ -79,10 +79,10 @@ export default function Home() {
               <CryptoSection />
             </Suspense>
             <Suspense fallback={<LoadingComponent />}>
-              <NewsSection />
+              <PriceHistoryChart cryptoId="bitcoin" />
             </Suspense>
             <Suspense fallback={<LoadingComponent />}>
-              <PriceHistoryChart cryptoId="bitcoin" />
+              <NewsSection />
             </Suspense>
           </div>
         );
