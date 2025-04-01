@@ -7,7 +7,7 @@ interface NewsArticle {
   title: string;
   content: string;
   date: string;
-  link: string; // ✅ Added 'link' property
+  link: string;
 }
 
 export const fetchCryptoNews = async (): Promise<NewsArticle[]> => {
@@ -17,11 +17,11 @@ export const fetchCryptoNews = async (): Promise<NewsArticle[]> => {
     title?: string; 
     description?: string; 
     pubDate?: string; 
-    link?: string;  // ✅ Ensure 'link' is fetched
+    link?: string;
   }) => ({
     title: article.title || 'No Title',
     content: article.description || 'No Content',
     date: article.pubDate || 'Unknown Date',
-    link: article.link || '#'  // ✅ Provide a fallback if no link is available
+    link: article.link || '#'
   }));
 };
