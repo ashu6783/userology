@@ -72,7 +72,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
   }>>([]);
   const [timeInterval, setTimeInterval] = useState<TimeInterval>('1d');
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const [showVolume, setShowVolume] = useState<boolean>(false);
   const [percentChange, setPercentChange] = useState<number | null>(null);
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
@@ -104,7 +104,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
   // Function to load history based on selected interval
   const loadHistory = React.useCallback(async (interval: TimeInterval) => {
     setLoading(true);
-    setError(null);
+    // setError(null);
 
     try {
       const days = intervalToDays[interval];
@@ -130,7 +130,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
 
     } catch (err) {
       console.error('Error fetching price history:', err);
-      setError('Failed to load price data. Please try again later.');
+      // setError('Failed to load price data. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -407,11 +407,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
         </div>
       </div>
 
-      {error && (
-        <div className="p-2 sm:p-3 mb-4 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded-md text-sm">
-          {error}
-        </div>
-      )}
+
 
       {loading ? (
         <div className="flex justify-center items-center h-48 sm:h-64">
@@ -420,7 +416,7 @@ export default function PriceHistoryChart({ cryptoId }: PriceHistoryChartProps) 
       ) : (
         <>
           {priceData.length === 0 ? (
-            <p className="text-center py-10 sm:py-16 text-sm sm:text-base">No price data available for {cryptoId}.</p>
+            <p className="text-center py-10 sm:py-16 text-sm sm:text-base"></p>
           ) : (
             <div className="h-52 sm:h-64 md:h-80 lg:h-96">
               <Line data={chartData} options={options} />
