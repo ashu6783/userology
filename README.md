@@ -1,4 +1,4 @@
-# Userology Dashboard
+# Zentrix Dashboard
 A modern, responsive dashboard built with Next.js, TypeScript, and Tailwind CSS. The application provides a user-friendly interface to view weather, cryptocurrency prices, and news, with a dynamic landing page featuring animated text using Framer Motion. The dashboard supports real-time updates via WebSocket (using Redux) and includes a tabbed navigation system for seamless section switching
 
 ## Features
