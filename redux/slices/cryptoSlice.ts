@@ -3,9 +3,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface Crypto {
   id: string;
   name: string;
-  priceUsd: string;
-  changePercent24Hr: string;
-  marketCapUsd: string;
+  current_price: number;
+  price_change_percentage_24h: number;
+  market_cap: number;
 }
 
 interface CryptoState {

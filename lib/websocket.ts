@@ -1,28 +1,28 @@
 import { AppDispatch } from '../redux/store';
 import { addNotification } from '../redux/slices/notificationSlice';
+import { pollCryptoPrices } from './api/crypto';
 
-const COINCAP_WS_URL = 'wss://ws.coincap.io/prices?assets=bitcoin,ethereum';
+export const startPricePolling = (
+  dispatch: AppDispatch,
+  addNotificationAction: typeof addNotification,
+  assets: string[] = ['bitcoin', 'ethereum']
+) => {
+  console.log('Starting CoinGecko price polling');
 
-export const connectWebSocket = (dispatch: AppDispatch, addNotificationAction: typeof addNotification) => {
-  const ws = new WebSocket(COINCAP_WS_URL);
-
-  ws.onopen = () => {
-    console.log('Connected to CoinCap WebSocket');
+  const poll = async () => {
+    try {
+      const data = await pollCryptoPrices(assets);
+      dispatch(addNotificationAction({ type: 'price_alert', message: JSON.stringify(data) }));
+    } catch (error) {
+      console.error('Polling error:', error);
+    }
   };
 
-  ws.onmessage = (event: MessageEvent) => {
-    const data = JSON.parse(event.data as string); // e.g., { "bitcoin": "6929.82", "ethereum": "404.97" }
-    dispatch(addNotificationAction({ type: 'price_alert', message: JSON.stringify(data) }));
-  };
+  poll();
+  const intervalId = setInterval(poll, 10000);
 
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error);
+  return () => {
+    console.log('Stopping CoinGecko price polling');
+    clearInterval(intervalId);
   };
-
-  ws.onclose = () => {
-    console.log('WebSocket disconnected');
-    setTimeout(() => connectWebSocket(dispatch, addNotificationAction), 2000); // Auto-reconnect
-  };
-
-  return ws;
 };

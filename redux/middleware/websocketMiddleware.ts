@@ -1,12 +1,12 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { connectWebSocket } from '../../lib/websocket';
+import { startPricePolling } from '../../lib/websocket';
 import { addNotification } from '../slices/notificationSlice';
 
 const WEBSOCKET_CONNECT = 'WEBSOCKET_CONNECT';
 
 const websocketMiddleware: Middleware = (store) => (next) => (action: unknown) => {
   if ((action as { type: string }).type === WEBSOCKET_CONNECT) {
-    connectWebSocket(store.dispatch, addNotification);
+    startPricePolling(store.dispatch, addNotification);
 
     // Simulate weather alerts every 10 seconds
     const simulateWeatherAlert = () => {
