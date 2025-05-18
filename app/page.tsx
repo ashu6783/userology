@@ -19,7 +19,7 @@ const LoadingComponent = () => (
 
 const InitialLoadingScreen = () => (
   <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
-    <div className="text-white text-6xl font-bold animate-pulse">Userology</div>
+    <div className="text-white text-6xl font-bold animate-pulse">Zentriz..</div>
     <div className="mt-8 text-white">Loading a goto dashboard experience with real-time updates of crypto and weather...</div>
     <div className="mt-8 text-white">Please wait...</div>
   </div>
